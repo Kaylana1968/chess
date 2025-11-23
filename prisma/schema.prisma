@@ -7,6 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model Test {
-  id Int @id @default(autoincrement())
+model Room {
+  id String @id @db.Uuid @default(uuid())
 }

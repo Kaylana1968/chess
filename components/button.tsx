@@ -27,6 +27,8 @@ export default function Button({
 	};
 
 	return (
-		<button className={`${colors[color]} ${types[type]}`}>{children}</button>
+		<button className={`${colors[color]} ${types[type]}`} {...props}>
+			{children}
+		</button>
 	);
 }
