@@ -12,3 +12,7 @@ model User {
   username String @unique
   password String
 }
+
+model Room {
+  id String @id @db.Uuid @default(uuid())
+}
