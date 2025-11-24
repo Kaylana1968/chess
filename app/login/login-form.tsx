@@ -24,7 +24,7 @@ export default function LoginForm() {
 			className="flex w-120 flex-col gap-2 rounded border border-neutral-600 bg-neutral-800 p-4 text-white"
 			action={formAction}
 		>
-			<h1 className="text-center text-4xl font-semibold">Register</h1>
+			<h1 className="text-center text-4xl font-semibold">Login</h1>
 
 			<Field className="flex flex-col">
 				<Label className="after:ml-1 after:content-[':']">Username</Label>
