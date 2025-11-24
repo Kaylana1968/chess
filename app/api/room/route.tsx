@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
 	try {
 		const newRoom = await prisma.room.create({
 			data: {},

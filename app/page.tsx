@@ -29,7 +29,7 @@ export default function Home() {
 
 			console.log("Room created with ID:", roomId);
 
-			router.push(`/lobby/${roomId}`);
+			router.push(`/room/${roomId}`);
 		} catch (error) {
 			console.error("Error creating room:", error);
 		}
