@@ -2,12 +2,10 @@ import RegisterForm from "./register-form";
 
 export default function Register() {
 	return (
-		<>
-			<h1 className="text-center text-4xl font-semibold">Register</h1>
-
-			<div className="mt-10 flex justify-center">
+		<main className="h-screen bg-[url(/background.png)] bg-cover py-10">
+			<div className="flex justify-center">
 				<RegisterForm />
 			</div>
-		</>
+		</main>
 	);
 }

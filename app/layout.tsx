@@ -22,7 +22,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${inter.variable} antialiased`}>
-				<header className="h-20">
+				{/* <header className="h-20">
 					<div className="relative aspect-square h-full">
 						<Image
 							src={favicon.src}
@@ -31,7 +31,7 @@ export default function RootLayout({
 							className="object-contain"
 						/>
 					</div>
-				</header>
+				</header> */}
 
 				{children}
 			</body>

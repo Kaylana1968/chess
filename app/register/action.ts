@@ -1,24 +1,41 @@
 "use server";
 
-import { Prisma } from "@/generated/prisma/client";
+import { hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import { FormState, FormStatus } from "@/types/form";
 
-const saltRounds = 10;
+export async function createUser(prevState: FormState, formData: FormData) {
+	const username = formData.get("username")?.toString();
+	const password = formData.get("password")?.toString();
+	const confirmPassword = formData.get("confirmPassword")?.toString();
 
-async function hashPassword(password: string) {
-	const hashedPassword = await bcrypt.hash(password, saltRounds);
+	if (!username || !password)
+		return {
+			message: "Username and password can't be null",
+			status: "error" as FormStatus
+		};
 
-	return hashedPassword;
-}
+	if (confirmPassword !== password)
+		return {
+			message: "The password and its confirmation don't match",
+			status: "error" as FormStatus
+		};
 
-export async function createUser({
-	username,
-	password
-}: Prisma.UserCreateInput) {
-	const hashedPassword = await hashPassword(password);
+	try {
+		const hashedPassword = await hashPassword(password);
 
-	await prisma.user.create({
-		data: { username, password: hashedPassword }
-	});
+		await prisma.user.create({
+			data: { username, password: hashedPassword }
+		});
+	} catch {
+		return {
+			message: "Database Error: Failed to create user.",
+			status: "error" as FormStatus
+		};
+	}
+
+	return {
+		message: "User created successfully",
+		status: "success" as FormStatus
+	};
 }
