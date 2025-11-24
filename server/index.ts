@@ -2,62 +2,99 @@ import { WebSocket, WebSocketServer } from "ws";
 
 const PORT = 3001;
 
-// État du jeu (le "compteur")
-let currentCount: number = 0;
+const roomCounts = new Map<string, number>();
 
-// Créer le serveur WebSocket
+type ClientWebSocket = WebSocket & {
+	roomId?: string;
+};
 const wss = new WebSocketServer({ port: PORT });
 
-// Déclaration du type pour les messages entrants
-type ClientMessage = {
+type JoinMessage = {
+	type: "joinRoom";
+	payload: {
+		roomId: string;
+	};
+};
+
+type IncrementMessage = {
 	type: "incrementCount";
 	payload: unknown;
 };
 
+type ClientMessage = JoinMessage | IncrementMessage;
+
 console.log(`WebSocket Server starting on port ${PORT}...`);
 
-// 💡 Fonction utilitaire pour diffuser le nouvel état à TOUS les clients
-const broadcastCount = (newCount: number) => {
-	// 1. Créer le message JSON à envoyer
+const broadcastCount = (roomId: string, newCount: number) => {
 	const message = JSON.stringify({
 		type: "countUpdate",
 		payload: newCount
 	});
 
-	// 2. Parcourir tous les clients connectés et l'envoyer
 	wss.clients.forEach(client => {
-		if (client.readyState === WebSocket.OPEN) {
-			client.send(message);
+		const roomClient = client as ClientWebSocket;
+
+		if (
+			roomClient.readyState === WebSocket.OPEN &&
+			roomClient.roomId === roomId
+		) {
+			roomClient.send(message);
 		}
 	});
 };
 
 wss.on("connection", (ws: WebSocket) => {
-	// La propriété 'id' n'existe pas nativement, on utiliserait un Map ou on l'ajouterait si besoin
+	const client = ws as ClientWebSocket;
+
 	console.log(`Client connecté (total: ${wss.clients.size})`);
 
-	// 1. Envoyer la valeur actuelle lors de la connexion
-	broadcastCount(currentCount); // Utiliser broadcast pour envoyer à ce client (et tous les autres)
-
-	// 2. Gérer les messages entrants
-	ws.on("message", data => {
+	client.on("message", data => {
 		try {
-			// Le message est un Buffer, le convertir en string puis le parser
 			const message: ClientMessage = JSON.parse(data.toString());
 
-			if (message.type === "incrementCount") {
-				currentCount++;
-				console.log(`Compteur incrémenté à: ${currentCount}`);
+			if (message.type === "joinRoom") {
+				const { roomId } = message.payload;
 
-				// 3. Diffuser la nouvelle valeur à TOUS
-				broadcastCount(currentCount);
+				client.roomId = roomId;
+
+				if (!roomCounts.has(roomId)) {
+					roomCounts.set(roomId, 0);
+					console.log(`Nouvelle salle créée: ${roomId}`);
+				}
+
+				const currentCount = roomCounts.get(roomId)!;
+
+				console.log(
+					`Client a rejoint la salle ${roomId}. Compteur: ${currentCount}`
+				);
+
+				client.send(
+					JSON.stringify({
+						type: "countUpdate",
+						payload: currentCount
+					})
+				);
+			} else if (message.type === "incrementCount") {
+				const roomId = client.roomId;
+
+				if (!roomId) {
+					console.error("Erreur: Le client n'a pas encore rejoint de salle.");
+					return;
+				}
+
+				let currentCount = roomCounts.get(roomId)!;
+				currentCount++;
+				roomCounts.set(roomId, currentCount);
+
+				console.log(`Salle ${roomId} incrémentée à: ${currentCount}`);
+
+				broadcastCount(roomId, currentCount);
 			}
 		} catch (error) {
 			console.error("Erreur de traitement du message:", error);
 		}
 	});
 
-	// 4. Gérer la déconnexion
 	ws.on("close", () => {
 		console.log(`Client déconnecté (restant: ${wss.clients.size})`);
 	});
