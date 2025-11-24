@@ -39,7 +39,7 @@ export default function LoginForm() {
 			<div className="mt-4 flex items-end gap-2">
 				<Button
 					type="submit"
-					className="w-min rounded border border-neutral-600 px-2 py-1 disabled:cursor-not-allowed data-hover:border-neutral-500 data-hover:data-active:opacity-50"
+					className="rounded border border-neutral-600 px-2 py-1 disabled:cursor-not-allowed data-hover:border-neutral-500 data-hover:data-active:opacity-50"
 					disabled={isPending}
 				>
 					Login

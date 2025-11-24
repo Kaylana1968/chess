@@ -10,7 +10,7 @@ export default function Button({
 }: {
 	children?: React.ReactNode;
 	color: "green" | "blue" | "red" | "white" | "black";
-	size: string;
+	size?: string;
 	type: "classic" | "roundround";
 } & React.HTMLAttributes<HTMLButtonElement>) {
 	const colors = {

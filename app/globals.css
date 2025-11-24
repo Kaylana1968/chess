@@ -5,6 +5,8 @@
   --foreground: #171717;
 }
 
+@custom-variant hover (&:hover);
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
