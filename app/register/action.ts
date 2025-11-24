@@ -2,6 +2,7 @@
 
 import { hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createSession } from "@/lib/session";
 import { FormState, FormStatus } from "@/types/form";
 
 export async function createUser(prevState: FormState, formData: FormData) {
@@ -9,24 +10,28 @@ export async function createUser(prevState: FormState, formData: FormData) {
 	const password = formData.get("password")?.toString();
 	const confirmPassword = formData.get("confirmPassword")?.toString();
 
-	if (!username || !password)
+	if (!username || !password) {
 		return {
-			message: "Username and password can't be null",
+			message: "Please enter both username and password",
 			status: "error" as FormStatus
 		};
+	}
 
-	if (confirmPassword !== password)
+	if (confirmPassword !== password) {
 		return {
 			message: "The password and its confirmation don't match",
 			status: "error" as FormStatus
 		};
+	}
 
 	try {
 		const hashedPassword = await hashPassword(password);
 
-		await prisma.user.create({
+		const user = await prisma.user.create({
 			data: { username, password: hashedPassword }
 		});
+
+		await createSession(user.id);
 	} catch {
 		return {
 			message: "Database Error: Failed to create user.",
@@ -35,7 +40,7 @@ export async function createUser(prevState: FormState, formData: FormData) {
 	}
 
 	return {
-		message: "User created successfully",
+		message: "Your account has been created and you are connected",
 		status: "success" as FormStatus
 	};
 }
