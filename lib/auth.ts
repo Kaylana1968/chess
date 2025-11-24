@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { prisma } from "./prisma";
+import prisma from "./prisma";
 import { decrypt } from "./session";
 
 const saltRounds = 10;

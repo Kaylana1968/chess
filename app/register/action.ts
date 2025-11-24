@@ -1,7 +1,7 @@
 "use server";
 
 import { hashPassword } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { createSession } from "@/lib/session";
 import { FormState, FormStatus } from "@/types/form";
 
