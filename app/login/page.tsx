@@ -1,4 +1,3 @@
-import { getSession } from "@/lib/auth";
 import LoginForm from "./login-form";
 
 export default async function Login() {
