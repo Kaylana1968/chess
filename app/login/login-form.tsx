@@ -1,7 +1,8 @@
 "use client";
 
+import InputField from "@/components/input-field";
 import { FormStatus } from "@/types/form";
-import { Button, Field, Input, Label } from "@headlessui/react";
+import { Button } from "@headlessui/react";
 import { useActionState } from "react";
 import { loginUser } from "./action";
 
@@ -9,9 +10,6 @@ const initialState = {
 	message: "",
 	status: "idle" as FormStatus
 };
-
-const inputClassName =
-	"rounded border border-neutral-600 px-2 py-0.5 transition-colors duration-100 data-focus:border-neutral-500 data-focus:outline-none data-hover:border-neutral-500";
 
 export default function LoginForm() {
 	const [state, formAction, isPending] = useActionState(
@@ -26,15 +24,8 @@ export default function LoginForm() {
 		>
 			<h1 className="text-center text-4xl font-semibold">Login</h1>
 
-			<Field className="flex flex-col">
-				<Label className="after:ml-1 after:content-[':']">Username</Label>
-				<Input type="text" name="username" className={inputClassName} />
-			</Field>
-
-			<Field className="flex flex-col">
-				<Label className="after:ml-1 after:content-[':']">Password</Label>
-				<Input type="password" name="password" className={inputClassName} />
-			</Field>
+			<InputField label="Username" type="text" name="username" />
+			<InputField label="Password" type="password" name="password" />
 
 			<div className="mt-4 flex items-end gap-2">
 				<Button
