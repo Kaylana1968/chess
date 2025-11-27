@@ -1,5 +1,9 @@
 import { HighlightColor } from "@/types/board";
 import { useHighlightContext } from "./HighlightContext";
+import { isWhite } from "./page";
+
+const rowNumbers = ["1", "2", "3", "4", "5", "6", "7", "8"];
+const colLetters = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
 function getColorFromEvent(e: React.MouseEvent): HighlightColor {
 	return e.ctrlKey && e.altKey
@@ -38,16 +42,33 @@ export default function Cell({
 		);
 	}
 
+	const isEven = (rowIndex + colIndex) % 2 === 0;
+
 	return (
 		<div
-			className={`relative flex items-center justify-center ${(rowIndex + colIndex) % 2 === 0 ? "bg-yellow-100" : "bg-orange-300/70"}`}
+			className={`relative flex items-center justify-center ${isEven ? "bg-orange-100/90" : "bg-orange-300/70"}`}
 			onMouseDown={handleMouseDown}
 			onMouseOver={handleMouseOver}
 			onContextMenu={e => e.preventDefault()}
 		>
-			{/* {isHighlighted && (
-				<div className="absolute top-0 left-0 size-full rounded-full border-6 border-green-700" />
-			)} */}
+			{colIndex === 0 && (
+				<span
+					className={`absolute top-1 left-1 text-lg/[1rem] font-bold ${isEven ? "text-orange-800/70" : "text-orange-100/90"}`}
+				>
+					{isWhite
+						? rowNumbers[rowNumbers.length - rowIndex - 1]
+						: rowNumbers[rowIndex]}
+				</span>
+			)}
+			{rowIndex === rowNumbers.length - 1 && (
+				<span
+					className={`absolute right-1 bottom-1 text-lg/[1rem] font-bold ${isEven ? "text-orange-800/70" : "text-orange-100/90"}`}
+				>
+					{isWhite
+						? colLetters[colIndex]
+						: colLetters[colLetters.length - colIndex - 1]}
+				</span>
+			)}
 			{children}
 		</div>
 	);

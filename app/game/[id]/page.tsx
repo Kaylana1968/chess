@@ -6,15 +6,17 @@ import Cell from "./Cell";
 import { HighlightContext } from "./HighlightContext";
 import HighlightDisplay from "./HightlightDisplay";
 
+export const isWhite = false;
+
 const initialBoard = [
-	["BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"],
-	["BP", "BP", "BP", "BP", "BP", "BP", "BP", "BP"],
-	["", "", "", "", "", "", "", ""],
-	["", "", "", "", "", "", "", ""],
-	["", "", "", "", "", "", "", ""],
-	["", "", "", "", "", "", "", ""],
+	["WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"],
 	["WP", "WP", "WP", "WP", "WP", "WP", "WP", "WP"],
-	["WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"]
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+	["BP", "BP", "BP", "BP", "BP", "BP", "BP", "BP"],
+	["BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"]
 ] as (keyof typeof pieceComponent | "")[][];
 
 function getIconFromCell(cell: keyof typeof pieceComponent | "") {
@@ -95,8 +97,9 @@ export default function Game() {
 				onMouseUp={handleMouseUp}
 			>
 				<HighlightDisplay />
-				{board.map((row, rowIndex) =>
-					row.map((cell, colIndex) => (
+
+				{(isWhite ? board.toReversed() : board).map((row, rowIndex) =>
+					(isWhite ? row : row.toReversed()).map((cell, colIndex) => (
 						<Cell
 							key={`${rowIndex}-${colIndex}`}
 							rowIndex={rowIndex}
