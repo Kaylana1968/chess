@@ -1,19 +1,14 @@
 "use client";
-
-import BlackBishop from "@/components/chess/BlackBishop";
-import BlackKing from "@/components/chess/BlackKing";
-import BlackKnight from "@/components/chess/BlackKnight";
-import BlackPawn from "@/components/chess/BlackPawn";
-import BlackQueen from "@/components/chess/BlackQueen";
-import BlackRook from "@/components/chess/BlackRook";
-import WhiteBishop from "@/components/chess/WhiteBishop";
-import WhiteKing from "@/components/chess/WhiteKing";
-import WhiteKnight from "@/components/chess/WhiteKnight";
-import WhitePawn from "@/components/chess/WhitePawn";
-import WhiteQueen from "@/components/chess/WhiteQueen";
-import WhiteRook from "@/components/chess/WhiteRook";
+import pieceComponent from "@/components/chess";
+import {
+	BoardHighlight,
+	Coordinates,
+	MovingBoardHighlight
+} from "@/types/board";
 import { useState } from "react";
 import Cell from "./Cell";
+import { HighlightContext } from "./HighlightContext";
+import HighlightDisplay from "./HightlightDisplay";
 
 const initialBoard = [
 	["BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"],
@@ -24,103 +19,98 @@ const initialBoard = [
 	["", "", "", "", "", "", "", ""],
 	["WP", "WP", "WP", "WP", "WP", "WP", "WP", "WP"],
 	["WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"]
-];
+] as (keyof typeof pieceComponent | "")[][];
 
-const initialHighlightedCells = initialBoard.map(row => row.map(() => false));
-
-function getIconFromCell(cell: string) {
+function getIconFromCell(cell: keyof typeof pieceComponent | "") {
 	if (!cell) return;
 
-	let Comp = undefined;
-
-	switch (cell) {
-		case "WR":
-			Comp = WhiteRook;
-			break;
-
-		case "WN":
-			Comp = WhiteKnight;
-			break;
-
-		case "WB":
-			Comp = WhiteBishop;
-			break;
-
-		case "WK":
-			Comp = WhiteKing;
-			break;
-
-		case "WQ":
-			Comp = WhiteQueen;
-			break;
-
-		case "WP":
-			Comp = WhitePawn;
-			break;
-
-		case "BR":
-			Comp = BlackRook;
-			break;
-
-		case "BN":
-			Comp = BlackKnight;
-			break;
-
-		case "BB":
-			Comp = BlackBishop;
-			break;
-
-		case "BK":
-			Comp = BlackKing;
-			break;
-
-		case "BQ":
-			Comp = BlackQueen;
-			break;
-
-		case "BP":
-			Comp = BlackPawn;
-			break;
-
-		default:
-			return;
-	}
+	const Comp = pieceComponent[cell];
 
 	return <Comp size={90} />;
 }
 
 export default function Game() {
 	const [board, setBoard] = useState(initialBoard);
-	const [highlightedCells, setHighlightedCells] = useState(
-		initialHighlightedCells
-	);
+	const [highlights, setHighlights] = useState<BoardHighlight[]>([]);
+	const [currentHighlight, setCurrentHighlight] =
+		useState<MovingBoardHighlight | null>(null);
 
-	function toggleHighlight(rowIndex: number, colIndex: number) {
-		setHighlightedCells(prev => {
-			const newHighlighted = prev.map(row => [...row]);
-			newHighlighted[rowIndex][colIndex] = !newHighlighted[rowIndex][colIndex];
+	function resetCurrentHighlight() {
+		setCurrentHighlight(null);
 
-			return newHighlighted;
-		});
+		document.removeEventListener("mouseup", resetCurrentHighlight);
+	}
+
+	function handleMouseDown(e: React.MouseEvent) {
+		if (e.button === 2) {
+			document.addEventListener("mouseup", resetCurrentHighlight);
+		}
+	}
+
+	function handleMouseOut() {
+		setCurrentHighlight(prev => (prev ? { ...prev, to: null } : null));
+	}
+
+	function handleMouseUp() {
+		if (currentHighlight?.to) {
+			setHighlights(prev => {
+				const newHighlights = [...prev];
+
+				const existingHighlightIndex = newHighlights.findIndex(
+					highlight =>
+						highlight.from.colIndex === currentHighlight.from!.colIndex &&
+						highlight.from.rowIndex === currentHighlight.from!.rowIndex &&
+						highlight.to.colIndex === currentHighlight.to!.colIndex &&
+						highlight.to.rowIndex === currentHighlight.to!.rowIndex
+				);
+
+				const removedHighlight =
+					existingHighlightIndex !== -1
+						? newHighlights.splice(existingHighlightIndex, 1)
+						: null;
+
+				if (
+					removedHighlight?.[0] &&
+					removedHighlight[0].color === currentHighlight.color
+				)
+					return newHighlights;
+
+				newHighlights.push(currentHighlight as BoardHighlight);
+
+				return newHighlights;
+			});
+		}
 	}
 
 	return (
-		<div
-			className="grid h-dvh w-dvh grid-cols-8 grid-rows-8"
-			onClick={() => setHighlightedCells(initialHighlightedCells)}
+		<HighlightContext.Provider
+			value={{
+				highlights,
+				setHighlights,
+				currentHighlight,
+				setCurrentHighlight
+			}}
 		>
-			{board.map((row, rowIndex) =>
-				row.map((cell, colIndex) => (
-					<Cell
-						key={`${rowIndex}-${colIndex}`}
-						isEven={(rowIndex + colIndex) % 2 === 0}
-						isHighlighted={highlightedCells[rowIndex][colIndex]}
-						toggleHighlight={() => toggleHighlight(rowIndex, colIndex)}
-					>
-						{getIconFromCell(cell)}
-					</Cell>
-				))
-			)}
-		</div>
+			<div
+				className="relative grid h-dvh w-dvh grid-cols-8 grid-rows-8"
+				onClick={() => setHighlights([])}
+				onMouseDown={handleMouseDown}
+				onMouseOut={handleMouseOut}
+				onMouseUp={handleMouseUp}
+			>
+				<HighlightDisplay />
+				{board.map((row, rowIndex) =>
+					row.map((cell, colIndex) => (
+						<Cell
+							key={`${rowIndex}-${colIndex}`}
+							rowIndex={rowIndex}
+							colIndex={colIndex}
+						>
+							{getIconFromCell(cell)}
+						</Cell>
+					))
+				)}
+			</div>
+		</HighlightContext.Provider>
 	);
 }
