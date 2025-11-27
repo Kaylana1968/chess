@@ -58,8 +58,8 @@ export default function Game() {
 
 				const existingHighlightIndex = newHighlights.findIndex(
 					highlight =>
-						highlight.from.colIndex === currentHighlight.from!.colIndex &&
-						highlight.from.rowIndex === currentHighlight.from!.rowIndex &&
+						highlight.from.colIndex === currentHighlight.from.colIndex &&
+						highlight.from.rowIndex === currentHighlight.from.rowIndex &&
 						highlight.to.colIndex === currentHighlight.to!.colIndex &&
 						highlight.to.rowIndex === currentHighlight.to!.rowIndex
 				);
