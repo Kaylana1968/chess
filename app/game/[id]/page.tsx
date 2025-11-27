@@ -6,7 +6,7 @@ import Cell from "./Cell";
 import { HighlightContext } from "./HighlightContext";
 import HighlightDisplay from "./HightlightDisplay";
 
-export const isWhite = false;
+export const isWhite = true;
 
 const initialBoard = [
 	["WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"],

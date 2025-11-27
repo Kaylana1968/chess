@@ -3,7 +3,7 @@ export type Coordinates = {
 	colIndex: number;
 };
 
-export type HighlightColor = "green" | "red" | "blue" | "orange";
+export type HighlightColor = "green" | "red" | "blue" | "yellow";
 
 export type BoardHighlight = {
 	from: Coordinates;

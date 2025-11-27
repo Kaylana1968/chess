@@ -2,7 +2,13 @@ import { BoardHighlight, Coordinates, HighlightColor } from "@/types/board";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useHighlightContext } from "./HighlightContext";
 
-const colors: HighlightColor[] = ["red", "blue", "green", "orange"];
+const colors: HighlightColor[] = ["green", "red", "blue", "yellow"];
+const hexaColors = {
+	green: "#15781B",
+	red: "#882020",
+	blue: "#003088",
+	yellow: "#e68f00"
+} as const;
 
 const circleStrokeWidthRatio = 0.06;
 const circleMovingShrinkRatio = 0.3;
@@ -81,7 +87,7 @@ export default function HighlightDisplay() {
 					cy={startY}
 					r={(squareSize - strokeWidth) * 0.5}
 					fill="none"
-					stroke={highlight.color}
+					stroke={hexaColors[highlight.color]}
 					strokeWidth={
 						highlight.isMoving
 							? strokeWidth * (1 - circleMovingShrinkRatio)
@@ -106,7 +112,7 @@ export default function HighlightDisplay() {
 			<path
 				d={pathD}
 				fill="none"
-				stroke={highlight.color}
+				stroke={hexaColors[highlight.color]}
 				strokeWidth={
 					highlight.isMoving
 						? strokeWidth * (1 - arrowMovingShrinkRatio)
@@ -140,7 +146,7 @@ export default function HighlightDisplay() {
 					>
 						<path
 							d={`M 0 0 L ${arrowHeadSize * Math.sqrt(2)} ${arrowHeadSize} L 0 ${arrowHeadSize * 2} z`}
-							fill={color}
+							fill={hexaColors[color]}
 						/>
 					</marker>
 				))}

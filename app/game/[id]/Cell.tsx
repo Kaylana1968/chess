@@ -7,7 +7,7 @@ const colLetters = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
 function getColorFromEvent(e: React.MouseEvent): HighlightColor {
 	return e.ctrlKey && e.altKey
-		? "orange"
+		? "yellow"
 		: e.ctrlKey
 			? "red"
 			: e.altKey
@@ -46,14 +46,14 @@ export default function Cell({
 
 	return (
 		<div
-			className={`relative flex items-center justify-center ${isEven ? "bg-orange-100/90" : "bg-orange-300/70"}`}
+			className={`relative flex items-center justify-center ${isEven ? "bg-[#f0d9b5]" : "bg-[#b58863]"}`}
 			onMouseDown={handleMouseDown}
 			onMouseOver={handleMouseOver}
 			onContextMenu={e => e.preventDefault()}
 		>
 			{colIndex === 0 && (
 				<span
-					className={`absolute top-1 left-1 text-lg/[1rem] font-bold ${isEven ? "text-orange-800/70" : "text-orange-100/90"}`}
+					className={`absolute top-1 left-1 text-lg/4 font-bold ${isEven ? "text-[#946f51]" : "text-[#f0d9b5]"}`}
 				>
 					{isWhite
 						? rowNumbers[rowNumbers.length - rowIndex - 1]
@@ -62,7 +62,7 @@ export default function Cell({
 			)}
 			{rowIndex === rowNumbers.length - 1 && (
 				<span
-					className={`absolute right-1 bottom-1 text-lg/[1rem] font-bold ${isEven ? "text-orange-800/70" : "text-orange-100/90"}`}
+					className={`absolute right-1 bottom-1 text-lg/4 font-bold ${isEven ? "text-[#946f51]" : "text-[#f0d9b5]"}`}
 				>
 					{isWhite
 						? colLetters[colIndex]
