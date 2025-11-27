@@ -4,8 +4,8 @@ import { useHighlightContext } from "./HighlightContext";
 
 const colors: HighlightColor[] = ["red", "blue", "green", "orange"];
 
-const circleStrokeWidthRatio = 0.05;
-const circleMovingShrinkRatio = 0.4;
+const circleStrokeWidthRatio = 0.06;
+const circleMovingShrinkRatio = 0.3;
 
 const arrowStrokeWidthRatio = 0.15;
 const arrowMovingShrinkRatio = 0.1;
@@ -79,7 +79,7 @@ export default function HighlightDisplay() {
 				<circle
 					cx={startX}
 					cy={startY}
-					r={squareSize * (0.5 - circleStrokeWidthRatio)}
+					r={(squareSize - strokeWidth) * 0.5}
 					fill="none"
 					stroke={highlight.color}
 					strokeWidth={

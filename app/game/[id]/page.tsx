@@ -1,10 +1,6 @@
 "use client";
 import pieceComponent from "@/components/chess";
-import {
-	BoardHighlight,
-	Coordinates,
-	MovingBoardHighlight
-} from "@/types/board";
+import { BoardHighlight, MovingBoardHighlight } from "@/types/board";
 import { useState } from "react";
 import Cell from "./Cell";
 import { HighlightContext } from "./HighlightContext";
